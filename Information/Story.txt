@@ -1,0 +1,63 @@
+4
+{
+    "Edges": [
+        [0, 1],
+        [0, 3],
+        [1, 2],
+        [2, 0]
+    ]
+}
+{
+    "name": "first_room",
+    "image": "first_room",
+    "text": "1",
+    "choices": [
+        {
+            "condition" : "{\"Some\" * 2 + 3 > 2}",
+            "text": "2",
+            "gifts": {
+                "Some": 2
+            }
+        },
+        {
+            "condition" : "True",
+            "text": "end",
+            "gifts": {
+                "Some": 1
+            }
+        }
+    ]
+}
+{
+    "name": "second_room",
+    "image": "second_room",
+    "text": "2",
+    "choices": [
+        {
+            "condition": "True",
+            "text": "3",
+            "gifts": {
+                "Some": "(\"Some\" - 1) * 3"
+            }
+        }
+    ]
+}
+{
+    "name": "Проверка вывода русских букв",
+    "image": "third_room",
+    "text": "3",
+    "choices": [
+        {
+            "condition" : "True",
+            "text": "1",
+            "gifts": {}
+        }
+    ]
+}
+{
+    "name": "@end@end",
+    "image": "end",
+    "text": "Finish",
+    "choices": [
+    ]
+}
