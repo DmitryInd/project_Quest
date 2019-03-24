@@ -16,14 +16,14 @@
             "condition" : "{\"Some\" * 2 + 3 > 2}",
             "text": "2",
             "gifts": {
-                "Some": 2
+                "Some": 1.35
             }
         },
         {
             "condition" : "True",
             "text": "end",
             "gifts": {
-                "Some": 1
+                "Some": "0"
             }
         }
     ]
@@ -50,7 +50,9 @@
         {
             "condition" : "True",
             "text": "1",
-            "gifts": {}
+            "gifts": {
+                "Some": "\"Some\" * 2"
+            }
         }
     ]
 }

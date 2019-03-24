@@ -54,7 +54,8 @@ def fill_up(num, file, my_graph):
     s = get_json(file)
     context = json.loads(s)
 
-    my_graph.add_information(num, context["name"], context["image"], context["text"])
+    my_graph.add_information(num, context["name"], context["image"],
+                             context["text"])
     for i in range(len(context["choices"])):
         a = context["choices"][i]["condition"]
         b = context["choices"][i]["text"]
@@ -66,7 +67,7 @@ def transfer(to, inventory_name, inventory):
     """Update file with inventory"""
     inventory["Not visible"]["Now"] = to
     file_inv = codecs.open(inventory_name, 'w', 'utf-8')
-    json.dump(inventory, file_inv)
+    json.dump(inventory, file_inv, ensure_ascii=False)
     file_inv.close()
 
 

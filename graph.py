@@ -29,7 +29,8 @@ class ListGraph:
 
     def get_information(self, u):
         """Return name, name of image and text of slide"""
-        return self.information[u]
+        ans = self.information[u].copy()
+        return ans
 
     def add_content(self, u, num, term, inside, gifts):
         """Fill up edge by condition and string"""
@@ -43,4 +44,5 @@ class ListGraph:
 
     def get_next_vertices(self, u):
         """It is not used on idea"""
-        return self.__matrix[u]
+        ans = self.__matrix[u].copy()
+        return ans

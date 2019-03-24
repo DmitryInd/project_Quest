@@ -10,7 +10,8 @@ def get_str_inventory(inventory):
     s = ""
     for i in inventory['Visible'].items():
         if i[1] != 0:
-            s += '\n' + str(i[0]) + ' - ' + str(i[1])
+            s += '\n' + str(i[0]) + ' - ' + str(int(i[1])) +\
+                 ("%.2g" % (i[1] - int(i[1])))[1:]
 
     return s
 
@@ -20,15 +21,24 @@ def changer_names(expression, inventory):
     i = 0
     s = ""
     while i < len(expression):
-        if (expression[i] == "\"" and s == "") or (s != "" and expression[i] != "\""):
+        if (expression[i] == "\"" and s == "") or (s != ""
+                                                   and expression[i] != "\""):
             s += expression[i]
         elif expression[i] == "\"" and s != "":
             s = s[1:]
-            try:
-                obj = inventory["Visible"][s]
-            except Exception:
-                obj = inventory["Not visible"][s]
-            expression = expression[: i - len(s) - 1] + str(obj) + expression[i + 1:]
+            k = inventory["Visible"].get(s, None)
+            obj = inventory["Visible"]
+            if k is None:
+                k = inventory["Not visible"].get(s, None)
+                obj = inventory["Not visible"]
+                if k is None:
+                    k = inventory["Always visible"].get(s, None)
+                    obj = inventory["Always visible"]
+                    if k is None:
+                        raise Exception(s + 'does not exist')
+            obj = obj[s]
+            expression = expression[: i - len(s) - 1] + str(obj) + \
+                expression[i + 1:]
             i -= len(s) + 1
             s = ""
         i += 1
@@ -54,11 +64,16 @@ def perform_condition(condition, inventory):
 def take_gifts(to, gifts, inventory_name, inventory):
     """For calculate collected objects"""
     for i in gifts.items():
-        try:
-            k = inventory["Visible"][i[0]]
-            case = inventory["Visible"]
-        except Exception:
+        k = inventory["Visible"].get(i[0], None)
+        case = inventory["Visible"]
+        if k is None:
+            k = inventory["Not visible"].get(i[0], None)
             case = inventory["Not visible"]
+            if k is None:
+                k = inventory["Always visible"].get(i[0], None)
+                case = inventory["Always visible"]
+                if k is None:
+                    raise Exception(i[0] + 'does not exist')
         if str(type(i[1])) == "<class 'str'>":
             right_copy = changer_names(i[1], inventory)
             case[i[0]] = calculator.polka(right_copy)
@@ -82,10 +97,21 @@ def launch_story(story_graph, inventory_name, inventory):
         print(inf['text'])
         choices = story_graph.get_next_vertices(place)
         k = 0
-        for i in choices:
-            k += 1
-            if perform_condition(i['term'], inventory):
-                print(str(k) + ') ' + i['text'])
+        i = 0
+        while i < len(choices):
+            if perform_condition(choices[i]['term'], inventory):
+                k += 1
+                print(str(k) + ') ' + choices[i]['text'])
+                i += 1
+            else:
+                choices.pop(i)
+
+        s = ""
+        for i in inventory['Always visible'].items():
+            s += str(i[0]) + ' - ' + str(int(i[1])) +\
+                 ("%.2g" % (i[1] - int(i[1])))[1:] + " "
+        s += "(Открыть весь инвентарь - inventory)"
+        print(s)
         answer = input()
         ex = False
         while True:
@@ -103,7 +129,8 @@ def launch_story(story_graph, inventory_name, inventory):
         if ex:
             break
         answer = int(answer) - 1
-        take_gifts(choices[answer]["to"], choices[answer]["gifts"], inventory_name, inventory)
+        take_gifts(choices[answer]["to"], choices[answer]["gifts"],
+                   inventory_name, inventory)
 
     print(''.join(['+' for i in range(80)]))
     print("Игровая сессия закончена")
@@ -129,6 +156,24 @@ def selected_story(name_story):
     launch_story(my_graph, inventory_info[0], inventory_info[1])
 
 
+def my_story():
+    """This window tries to open your story"""
+    print("Введите путь до файла:")
+    answer = ""
+    while True:
+        if answer != "":
+            if answer == "exit":
+                print(''.join(['+' for i in range(80)]))
+                return
+            print("(Выход - exit)")
+            try:
+                selected_story(answer)
+                return
+            except IOError:
+                print("Файл с сюжетом или с инвентарём не существует")
+        answer = input()
+
+
 if __name__ == '__main__':
     try:
         while True:
@@ -138,9 +183,9 @@ if __name__ == '__main__':
             variants = []
             h = 0
             while h < len(folder):
-                inventory_name = folder[h][: -4] + '_Inventory.json'
+                m_inventory_name = folder[h][: -4] + '_Inventory.json'
                 try:
-                    m = folder.index(inventory_name)
+                    m = folder.index(m_inventory_name)
                     variants.append(folder[h])
                     if m > h:
                         folder.pop(h)
@@ -159,19 +204,18 @@ if __name__ == '__main__':
             f_answer = input()
             while True:
                 if f_answer.isdigit():
-                    if (int(f_answer) <= (len(variants) + 1)) and (int(f_answer) > 0):
+                    if (int(f_answer) <= (len(variants) + 1))\
+                            and (int(f_answer) > 0):
                         break
                 if f_answer.lower() == "exit":
                     raise(Exception("Выход"))
                 else:
                     print("Некорректный ввод")
-                answer = input()
+                f_answer = input()
             if int(f_answer) <= len(variants):
                 selected_story('Information\\' + variants[int(f_answer) - 1])
             else:
-                print("Введите путь до файла:")
-                f_answer = input()
-                selected_story(f_answer)
+                my_story()
     except Exception as f:
         if str(f) != "Выход":
             raise f

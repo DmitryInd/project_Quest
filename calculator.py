@@ -13,7 +13,7 @@ def truth(expression):
         i += 1
 
     bin_answer = polka(expression)
-    return True if bin_answer == 1 else False
+    return False if bin_answer == 0 else True
 
 
 def calculate(expression):
@@ -27,15 +27,14 @@ def calculate(expression):
     u = i
     while not expression[u].isdigit():
         u += 1
-    v = u
-    while v < len(expression) and expression[v].isdigit():
-        v += 1
-    b = int(expression[u: v])
+    b = polka(expression[u:])
     answer = False
     if expression[i] == "!":
         answer = (definition != b)
     else:
-        while i < len(expression) and (expression[i] == '<' or expression[i] == '>' or expression[i] == '='):
+        while i < u and (expression[i] == '<' or
+                         expression[i] == '>' or
+                         expression[i] == '='):
             answer = answer or (expression[i] == '<' and definition < b)
             answer = answer or (expression[i] == '>' and definition > b)
             answer = answer or (expression[i] == '=' and definition == b)
@@ -51,11 +50,11 @@ def polka(expression):
     prepare = 1
     i = ""
     for i in expression:  # Create reverse Polish notation
-        if i.isdigit():
+        if i.isdigit() or i == '.':
             num += i
             continue
         elif num != "":
-            res.append((0 - int(num)) if prepare == 2 else int(num))
+            res.append((0 - float(num)) if prepare == 2 else float(num))
             prepare = 0
             num = ""
         if i == " ":
@@ -84,13 +83,14 @@ def polka(expression):
         stack = stack[: k + 1] if k != 0 else []
         stack.append(i)
     if i.isdigit():
-        res.append(int(num))
+        res.append(float(num))
     for i in range(len(stack) - 1, -1, -1):
         res.append(stack[i])
 
     i = 2
     while len(res) > 1:  # Use it for calculating
-        if str(type(res[i])) != "<class 'int'>":
+        if (str(type(res[i])) != "<class 'float'>") and\
+                (str(type(res[i])) != "<class 'int'>"):
             if res[i] == "+":
                 res[i - 2] = res[i - 2] + res[i - 1]
                 res.pop(i - 1)
