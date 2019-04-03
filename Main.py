@@ -213,7 +213,9 @@ if __name__ == '__main__':
                     print("Некорректный ввод")
                 f_answer = input()
             if int(f_answer) <= len(variants):
-                selected_story('Information\\' + variants[int(f_answer) - 1])
+                selected_story('Information'
+                               + os.path.abspath('Information')[-12: -11]
+                               + variants[int(f_answer) - 1])
             else:
                 my_story()
     except Exception as f:

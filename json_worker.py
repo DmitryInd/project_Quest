@@ -67,7 +67,7 @@ def transfer(to, inventory_name, inventory):
     """Update file with inventory"""
     inventory["Not visible"]["Now"] = to
     file_inv = codecs.open(inventory_name, 'w', 'utf-8')
-    json.dump(inventory, file_inv, ensure_ascii=False)
+    json.dump(inventory, file_inv, indent="\t", ensure_ascii=False)
     file_inv.close()
 
 
