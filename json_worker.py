@@ -73,14 +73,13 @@ def transfer(to, inventory_name, inventory):
 
 def open_inventory(name_story):
     """Load inventory in dictionary"""
-    index = 0
-    for index in range(len(name_story) - 1, -1, -1):
-        if name_story[index] == '\\':
-            break
-    file = os.listdir(name_story[: index])
+    name_story = str(name_story)
+    only_path = os.path.dirname(name_story)
+    only_name = os.path.basename(name_story)
+    file = os.listdir(only_path)
     inventory_name = name_story[: -4] + '_Inventory_save.json'
     try:
-        file.index(name_story[index + 1: -4] + '_Inventory_save.json')
+        file.index(only_name[: -4] + '_Inventory_save.json')
     except Exception:
         shutil.copyfile(name_story[: -4] + '_Inventory.json', inventory_name)
     inventory = codecs.open(inventory_name, 'r', 'utf-8')

@@ -7,7 +7,9 @@
   },
   "Not visible": {
     "Now": 0,
-    "Уверенность": 0
+    "Уверенность": 0,
+    "Morning time": 1,
+    "Time for project": 20
   },
   "Always visible": {
     "Репутация": 10,
