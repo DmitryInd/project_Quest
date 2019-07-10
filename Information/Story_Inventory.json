@@ -1,0 +1,12 @@
+{
+  "Visible": {
+    "Some": 200.75,
+    "Россия": 1
+  },
+  "Not visible": {
+    "Now": 0
+  },
+  "Always visible": {
+    "Репутация": 0.55
+  }
+}
